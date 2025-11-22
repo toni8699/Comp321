@@ -1,0 +1,11 @@
+# Validate header: N (1..1e6) and k (1..1e18), separated by a single space.
+INT(1,1000000,N) SPACE INT(1,1000000000000000000,k) NEWLINE
+
+# Validate the single line containing N pile sizes gi, each in [1, 1e9],
+# separated by single spaces and terminated by a newline.
+REPI(i,N)
+    INT(1,1000000000) {SPACE INT(1,1000000000)}* NEWLINE
+END
+
+# No trailing tokens or blank lines are allowed.
+EOF

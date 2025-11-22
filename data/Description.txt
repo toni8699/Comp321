@@ -1,0 +1,25 @@
+Sample test cases
+=================
+- `sample01`: single pile with 5 coins; asks for the first coin (baseline sanity check).
+- `sample02`: two piles totaling 5 coins; `k=4` lands in the second pile (boundary crossing).
+- `sample03`: three piles with varying sizes; `k=5` hits the middle pile (mid-pile retrieval).
+- `sample04`: four equal piles; `k=10` is exactly at the end of pile three (uniform data).
+- `sample05`: three piles totaling 12 coins; `k=22` exceeds the total, so the answer is “impossible”.
+
+Secret test cases
+=================
+- `secret01`: single pile of 10 coins; `k=10` (small upper-bound baseline).
+- `secret02`: five piles; `k=11` is inside the second pile (crossing multiple piles).
+- `secret03`: three piles with a large middle pile; `k=57` lands there (stress the binary search).
+- `secret04`: 1,000 piles of size 1; `k=1` exercises large N with uniform weights.
+- `secret05`: `[3,7,2]`, `k=3` — exact end of pile one (off-by-one guard).
+- `secret06`: `[3,7,2]`, `k=9` — inside the second pile (mid-pile).
+- `secret07`: `[3,7,2]`, `k=10` — exact end of pile two.
+- `secret08`: `[3,7,2]`, `k=11` — first coin of pile three.
+- `secret09`: `[3,7,2]`, `k=12` — final coin in the instance.
+- `secret10`: `[3,7,2]`, `k=13` — exceeds the total to ensure “impossible”.
+- `secret11`: `[1_000_000_000]`, `k=1_000_000_000` — forces brute-force solutions to TLE.
+
+Random tests
+============
+- `secret12` and onward are generated pseudo-randomly
