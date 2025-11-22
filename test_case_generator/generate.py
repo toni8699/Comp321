@@ -1,105 +1,96 @@
 #!/usr/bin/env python3
 import random
-from bisect import bisect_left
-from pathlib import Path
+import os
+import bisect
 
-SAMPLE_DIR = Path("../data/sample")
-SECRET_DIR = Path("../data/secret")
-RNG = random.Random(314159)
-TOTAL_BYTES_LIMIT = 1_000_000  # total size budget for all .in files
+RNG = random.Random(2025)
+MAX_BYTES = 500 * 1024  # 500KB
+MIN_SECRETS = 20
 
-
-def compute_answers(counts, queries):
-    prefix = []
-    running = 0
-    for value in counts:
-        running += value
-        prefix.append(running)
-
-    if not prefix:
-        return ["impossible"] * len(queries)
-
-    total = prefix[-1]
-    answers = []
-    for query in queries:
-        if query < 1 or query > total:
-            answers.append("impossible")
-            continue
-        idx = bisect_left(prefix, query)
-        answers.append(str(idx + 1))
-    return answers
-
-
-def solve_and_save(folder, idx, counts, queries):
-    answers = compute_answers(counts, queries)
-
-    folder.mkdir(parents=True, exist_ok=True)
-    prefix = f"{folder.name}{idx:02d}"
-
-    (folder / f"{prefix}.in").write_text(
-        f"{len(counts)} {len(queries)}\n"
-        f"{' '.join(map(str, counts))}\n"
-        f"{' '.join(map(str, queries))}\n"
-    )
-    (folder / f"{prefix}.ans").write_text("\n".join(answers) + "\n")
-
-
-# Sample cases
-samples = [
+SAMPLES = [
     ([3, 1, 10, 2, 6], [1, 3, 4, 11, 16]),
     ([5], [1, 5]),
     ([2, 8, 4], [2, 9, 14]),
+    ([4, 2, 5], [6, 7, 11]),
+    ([1, 1, 1, 1], [1, 2, 3, 4]),
 ]
 
-secrets = [
-    ([1] * 20, list(range(1, 21))),
-    ([7, 3, 9, 1, 4, 6, 2, 5], [1, 7, 10, 11, 25, 37]),
-    ([10, 5, 8, 6, 3], [1, 10, 11, 27, 32]),
-    ([10, 100, 5], [1, 10, 57, 100, 115]),
-    ([1_000_000_000], [1, 500_000_000, 1_000_000_000]),
-    ([2] * 1000, [1, 200, 1999, 2000]),
+# 25,000 piles of 1. 25,000 queries for an impossible sum.
+# Logic: Brute force must check all N piles for all Q queries.
+# Cost: 25,000 * 25,000 = 625 Million operations.
+TLE_N = 25000
+TLE_COUNTS = [1] * TLE_N 
+TLE_QUERIES = [TLE_N + 1] * TLE_N # Every query forces a full scan
+
+HANDPICKED_SECRETS = [
+    ([10], [1, 10, 11]),                          # Single pile with 10 coins, 3 queries
+    ([1000000] * 5, [1, 1000000, 5000000, 5000001]), # 5 piles of 1,000,000 coins, 4 queries
+    ([1] * 1000, [1, 500, 1000, 1001]),           # 1,000 piles of 1 coin, 4 queries
+    ([10, 1, 10, 1], [10, 11, 21, 22, 23]),       # 4 piles with varying sizes, 5 queries
+    ([500], list(range(1, 502))),                 # Single pile with 500 coins, 501 queries
+    (TLE_COUNTS, TLE_QUERIES) #The TLE Case
 ]
 
+def solve(counts, queries):
+    prefix = []
+    curr = 0
+    for c in counts:
+        curr += c
+        prefix.append(curr)
+    
+    max_val = prefix[-1] if prefix else 0
+    answers = []
+    
+    for q in queries:
+        if 1 <= q <= max_val:
+            idx = bisect.bisect_left(prefix, q)
+            answers.append(str(idx))
+        else:
+            answers.append("impossible")
+    return "\n".join(answers)
 
-def estimate_case_size(counts, queries):
-    header = f"{len(counts)} {len(queries)}\n"
-    counts_line = " ".join(map(str, counts)) + "\n"
-    queries_line = " ".join(map(str, queries)) + "\n"
-    return len(header) + len(counts_line) + len(queries_line)
+def write_case(path, name, idx, counts, queries):
+    input_str = f"{len(counts)} {len(queries)}\n" \
+                f"{' '.join(map(str, counts))}\n" \
+                f"{' '.join(map(str, queries))}\n"
+    
+    ans_str = solve(counts, queries) + "\n"
 
+    base = f"{path}/{name}{idx:02d}"
+    with open(f"{base}.in", "w") as f: f.write(input_str)
+    with open(f"{base}.ans", "w") as f: f.write(ans_str)
+    return len(input_str)
 
-current_bytes = sum(estimate_case_size(c, q) for c, q in samples + secrets)
-generated = []
+def main():
+    os.makedirs("../data/sample", exist_ok=True)
+    os.makedirs("../data/secret", exist_ok=True)
 
-while current_bytes < TOTAL_BYTES_LIMIT:
-    if RNG.random() < 0.3:
-        n = RNG.randint(50_000, 120_000)
-        q = RNG.randint(50_000, 120_000)
-        counts = [RNG.randint(1, 1000) for _ in range(n)]
-    else:
-        n = RNG.randint(1, 5000)
-        q = RNG.randint(1, 5000)
-        counts = [RNG.randint(1, 1_000_000) for _ in range(n)]
-    total = sum(counts)
-    queries = [RNG.randint(1, total) for _ in range(q)]
+    print("Writing Samples...")
+    for i, (c, q) in enumerate(SAMPLES, 1):
+        write_case("../data/sample", "sample", i, c, q)
 
-    case_size = estimate_case_size(counts, queries)
-    if current_bytes + case_size > TOTAL_BYTES_LIMIT:
-        break
-    current_bytes += case_size
-    generated.append((counts, queries))
+    curr_bytes = 0
+    secret_idx = 1
 
+    print("Writing Handpicked Secrets (Including TLE case)...")
+    for c, q in HANDPICKED_SECRETS:
+        curr_bytes += write_case("../data/secret", "secret", secret_idx, c, q)
+        secret_idx += 1
+
+    print("Writing Random Secrets...")
+    while curr_bytes < MAX_BYTES or secret_idx <= MIN_SECRETS:
+        n_piles = RNG.randint(1, 2000)
+        max_val = 100000 if RNG.random() < 0.2 else 1000 
+        counts = [RNG.randint(1, max_val) for _ in range(n_piles)]
+        total = sum(counts)
+        
+        n_queries = RNG.randint(1, 2000)
+        queries = [RNG.randint(1, int(total * 1.1) + 5) for _ in range(n_queries)]
+
+        curr_bytes += write_case("../data/secret", "secret", secret_idx, counts, queries)
+        secret_idx += 1
+
+    print(f"Finished. {secret_idx-1} secrets created. Total size: {curr_bytes/1024:.2f}KB")
 
 if __name__ == "__main__":
-    for i, (counts, queries) in enumerate(samples, 1):
-        solve_and_save(SAMPLE_DIR, i, counts, queries)
-
-    offset = len(secrets)
-    for i, (counts, queries) in enumerate(secrets, 1):
-        solve_and_save(SECRET_DIR, i, counts, queries)
-
-    for j, (counts, queries) in enumerate(generated, offset + 1):
-        solve_and_save(SECRET_DIR, j, counts, queries)
-
-    total_secret_cases = len(secrets) + len(generated)
-    print(f"Generated {len(samples)} sample and {total_secret_cases} secret cases.")
+    main()
