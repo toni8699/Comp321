@@ -1,20 +1,20 @@
 Sample test cases
 =================
-- `sample01`: `[3,1,10,2,6]`; queries hit early coins, mid-pile, the last coin, and an impossible request.
-- `sample02`: `[5]`; checks the first and last coin in a single pile.
-- `sample03`: `[2,8,4]`; each query lands at a different pile boundary.
-- `sample04`: `[4,2,5]`; includes an interior hit and an impossible value.
-- `sample05`: `[1,1,1,1]`; walks across four uniform piles.
+- `sample01`: `[3,1,10,2,6]` with full-range queries to show hits in early, mid, last, and unreachable positions.
+- `sample02`: `[5]` double-checks single-pile boundaries (first vs. last coin).
+- `sample03`: `[2,8,4]` hits each pile boundary exactly to confirm prefix handling.
+- `sample04`: `[4,2,5]` proves interior hits and an out-of-range query produce mixed answers.
+- `sample05`: `[1,1,1,1]` keeps piles uniform so graders can sanity-check straight counting.
 
 Secret test cases (handpicked)
 ==============================
-- `secret01`: `[10]`, queries `[1,10,11]` to show valid vs impossible in one pile.
-- `secret02`: five piles of one million; probes the first coin, the 1e6 boundary, the final coin, and an impossible extra.
-- `secret03`: `[1]*1000`; tests first, middle, last, and one past the total.
-- `secret04`: `[10,1,10,1]`; alternating large/small piles with dense requests.
-- `secret05`: single pile `[500]` with 501 queries.
-- `secret06`: 25k piles of 1 coin with 25k queries asking for coin 25,001.
+- `secret01`: `[10]`, queries `[1,10,11]` for the minimal full case plus impossible.
+- `secret02`: `[1_000_000]*5` stresses large counts and an extra query at 5,000,001.
+- `secret03`: `[1]*1000` scales $N$ and probes first/middle/last/impossible slots.
+- `secret04`: `[10,1,10,1]` alternates pile sizes to flush out off-by-one errors.
+- `secret05`: `[500]` with queries `1..501` checks dense output and line formatting.
+- `secret06`: 25k piles of 1 with queries for 25,001 coins triggers TLE in naive $O(NQ)$.
 
 Random tests
 ============
-- `secret07` onward are pseudo-random within the size and byte limits.
+- `secret07+`: pseudo-random cases within the byte budget
