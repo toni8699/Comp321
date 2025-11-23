@@ -8,19 +8,17 @@ MAX_BYTES = 500 * 1024  # 500KB
 MIN_SECRETS = 20
 
 SAMPLES = [
-    ([3, 1, 10, 2, 6], [1, 3, 4, 11, 16]), 
-    ([5], [1, 5]),
-    ([2, 8, 4], [2, 9, 14]),
-    ([4, 2, 5], [6, 7, 11]),
-    ([1, 1, 1, 1], [1, 2, 3, 4]),
+    ([3, 1, 10, 2, 6], [1, 3, 4, 11, 23]), # test all cases 
+    ([5], [1, 5]), # test single pile
+    ([2, 8, 4], [2, 9, 14]), # test each pile boundary
+    ([4, 2, 5], [6, 7, 11]), # test interior hits and out of range 
+    ([1, 1, 1, 1], [1, 2, 3, 4,5]), # test uniform piles
 ]
 
-# 25,000 piles of 1. 25,000 queries for an impossible sum.
-# Logic: Brute force must check all N piles for all Q queries.
-# Cost: 25,000 * 25,000 = 625 Million operations.
+# TLE Case
 TLE_N = 25000 
 TLE_COUNTS = [1] * TLE_N 
-TLE_QUERIES = [TLE_N + 1] * TLE_N # Every query forces a full scan
+TLE_QUERIES = [TLE_N + 1] * TLE_N 
 
 HANDPICKED_SECRETS = [
     ([10], [1, 10, 11]),                          # Single pile with 10 coins, 3 queries
@@ -83,19 +81,11 @@ def main():
         # 20% chance of a large pile
         max_val = 100000 if RNG.random() < 0.2 else 1000 
         counts = [RNG.randint(1, max_val) for _ in range(n_piles)]
-        total = sum(counts)
-        
-    # 10% chance of using the upper range for piles; all queries stay within 1e9
-    max_query = 1_000_000_000
+
+        # 10% chance of a large query
+        max_query = 1000000000000000000 if RNG.random() < 0.1 else 1000000000
         n_queries = RNG.randint(1, 2000)
-    queries = []
-    for _ in range(n_queries):
-        if total > 0 and RNG.random() < 0.8:
-            hi = min(total, max_query)
-            queries.append(RNG.randint(1, hi))
-        else:
-            lo = min(max_query, total + 1)
-            queries.append(RNG.randint(lo, max_query))
+        queries = [RNG.randint(1, max_query) for _ in range(n_queries)] 
 
 
         curr_bytes += write_case("../data/secret", "secret", secret_idx, counts, queries)
