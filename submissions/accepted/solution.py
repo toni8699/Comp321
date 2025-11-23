@@ -1,6 +1,6 @@
 N, Q = map(int, input().split())
 piles = list(map(int, input().split()))
-q = list (map(int, input().split()))
+queries = list (map(int, input().split()))
 
 prefix = []
 cur = 0

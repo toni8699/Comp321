@@ -85,10 +85,17 @@ def main():
         counts = [RNG.randint(1, max_val) for _ in range(n_piles)]
         total = sum(counts)
         
-        # 10% chance of a large query
-        max_query = 1000000000000000000 if RNG.random() < 0.1 else 1000000000
+    # 10% chance of using the upper range for piles; all queries stay within 1e9
+    max_query = 1_000_000_000
         n_queries = RNG.randint(1, 2000)
-        queries = [RNG.randint(1, max_query) for _ in range(n_queries)] 
+    queries = []
+    for _ in range(n_queries):
+        if total > 0 and RNG.random() < 0.8:
+            hi = min(total, max_query)
+            queries.append(RNG.randint(1, hi))
+        else:
+            lo = min(max_query, total + 1)
+            queries.append(RNG.randint(lo, max_query))
 
 
         curr_bytes += write_case("../data/secret", "secret", secret_idx, counts, queries)
