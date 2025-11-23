@@ -5,7 +5,7 @@ INT(1,1000000,N) SPACE INT(1,1000000,Q) NEWLINE
 # separated by single spaces and terminated by a newline.
 INT(1,1000000000) {SPACE INT(1,1000000000)}* NEWLINE
 
-# Validate the line containing Q query values kj, each in [1, sum gi],
+# Validate the line containing Q query values kj, each in [1, 1e18],
 # separated by single spaces and terminated by a newline.
 INT(1,1000000000000000000) {SPACE INT(1,1000000000000000000)}* NEWLINE
 
