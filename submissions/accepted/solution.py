@@ -24,3 +24,4 @@ for query in queries:
         print("impossible")
     else:
         print(binary_search(prefix, query))
+

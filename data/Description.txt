@@ -1,25 +1,20 @@
 Sample test cases
 =================
-- `sample01`: single pile with 5 coins; asks for the first coin (baseline sanity check).
-- `sample02`: two piles totaling 5 coins; `k=4` lands in the second pile (boundary crossing).
-- `sample03`: three piles with varying sizes; `k=5` hits the middle pile (mid-pile retrieval).
-- `sample04`: four equal piles; `k=10` is exactly at the end of pile three (uniform data).
-- `sample05`: three piles totaling 12 coins; `k=22` exceeds the total, so the answer is “impossible”.
+- `sample01`: `[3,1,10,2,6]`; queries hit early coins, mid-pile, the last coin, and an impossible request.
+- `sample02`: `[5]`; checks the first and last coin in a single pile.
+- `sample03`: `[2,8,4]`; each query lands at a different pile boundary.
+- `sample04`: `[4,2,5]`; includes an interior hit and an impossible value.
+- `sample05`: `[1,1,1,1]`; walks across four uniform piles.
 
-Secret test cases
-=================
-- `secret01`: single pile of 10 coins; `k=10` (small upper-bound baseline).
-- `secret02`: five piles; `k=11` is inside the second pile (crossing multiple piles).
-- `secret03`: three piles with a large middle pile; `k=57` lands there (stress the binary search).
-- `secret04`: 1,000 piles of size 1; `k=1` exercises large N with uniform weights.
-- `secret05`: `[3,7,2]`, `k=3` — exact end of pile one (off-by-one guard).
-- `secret06`: `[3,7,2]`, `k=9` — inside the second pile (mid-pile).
-- `secret07`: `[3,7,2]`, `k=10` — exact end of pile two.
-- `secret08`: `[3,7,2]`, `k=11` — first coin of pile three.
-- `secret09`: `[3,7,2]`, `k=12` — final coin in the instance.
-- `secret10`: `[3,7,2]`, `k=13` — exceeds the total to ensure “impossible”.
-- `secret11`: `[1_000_000_000]`, `k=1_000_000_000` — forces brute-force solutions to TLE.
+Secret test cases (handpicked)
+==============================
+- `secret01`: `[10]`, queries `[1,10,11]` to show valid vs impossible in one pile.
+- `secret02`: five piles of one million; probes the first coin, the 1e6 boundary, the final coin, and an impossible extra.
+- `secret03`: `[1]*1000`; tests first, middle, last, and one past the total.
+- `secret04`: `[10,1,10,1]`; alternating large/small piles with dense requests.
+- `secret05`: single pile `[500]` with 501 queries.
+- `secret06`: 25k piles of 1 coin with 25k queries asking for coin 25,001.
 
 Random tests
 ============
-- `secret12` and onward are generated pseudo-randomly
+- `secret07` onward are pseudo-random within the size and byte limits.

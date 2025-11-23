@@ -20,7 +20,7 @@
 % Example use of the \illustration command
 \illustration{0.3}{davy.png}{Photo by \href{https://disneyheroesbattlemode.fandom.com/wiki/Davy_Jones}{Walt Disney Studio and DLC Studio on Canva}}
 
-Davy Jones, the feared captain of the ghostly Flying Dutchman, has spent years plundering countless coins from sunken ships. To keep pirates away, he curses every coin except one.
+Davy Jones, the feared captain of the ghostly Flying Dutchman, has spent years plundering countless coins from sunken ships. To keep thieves guessing, he curses every coin in each pile except for a single untouched piece.
 As a daring adventurer, you have intercepted a ledger describing how many coins lie in each of his piles.
 
 Before the night ends, the restless crew will shout out $Q$ requests for specific coin positions within the combined hoard. For every request, you must determine which pile hides that exact coin before Davy Jones notices your intrusion.
@@ -31,13 +31,13 @@ Before the night ends, the restless crew will shout out $Q$ requests for specifi
 Input consists of three lines.
 The first line contains two integers $N$ and $Q$ ($1 \le N, Q \le 200\,000$), the number of piles and the number of crew requests.
 The second line contains $N$ integers $g_1, g_2, \dots, g_N$ ($1 \le g_i \le 1\,000\,000\,000$), where $g_i$ is the number of coins in pile $i$.
-The third line contains $Q$ integers $k_1, k_2, \dots, k_Q$ $(1 \le k_j \le \sum_{i=1}^{N} g_i)$ describing the positions of the requested coins in the combined collection.
+The third line contains $Q$ integers $k_1, k_2, \dots, k_Q$ ($1 \le k_j \le 10^{18}$) describing the positions the crew wants you to inspect in the combined collection.
 
 
 
 \section*{Output}
 
-Output $Q$ lines. For each request $k_j$, print the $1$-based index of the pile that contains the $k_j$-th coin when the piles are concatenated in order from $1$ to $N$.
+Output $Q$ lines. For each request $k_j$, print the $0$-based index of the pile that contains the $k_j$-th coin when the piles are concatenated in order from $0$ to $N-1$. If the requested coin does not exist, print \texttt{impossible}.
 
 \section*{Sample Input 1 \hfill Sample Output 1}
 
@@ -52,11 +52,11 @@ Output $Q$ lines. For each request $k_j$, print the $1$-based index of the pile 
 \hfill
 \begin{minipage}[t]{0.34\textwidth}
 \begin{verbatim}
-1
+0
+0
 1
 2
 3
-4
 \end{verbatim}
 \end{minipage}
 
@@ -75,8 +75,8 @@ Output $Q$ lines. For each request $k_j$, print the $1$-based index of the pile 
 \hfill
 \begin{minipage}[t]{0.34\textwidth}
 \begin{verbatim}
-1
-1
+0
+0
 \end{verbatim}
 \end{minipage}
 
@@ -95,9 +95,9 @@ Output $Q$ lines. For each request $k_j$, print the $1$-based index of the pile 
 \hfill
 \begin{minipage}[t]{0.34\textwidth}
 \begin{verbatim}
+0
 1
 2
-3
 \end{verbatim}
 \end{minipage}
 

@@ -8,7 +8,7 @@ MAX_BYTES = 500 * 1024  # 500KB
 MIN_SECRETS = 20
 
 SAMPLES = [
-    ([3, 1, 10, 2, 6], [1, 3, 4, 11, 16]),
+    ([3, 1, 10, 2, 6], [1, 3, 4, 11, 16]), 
     ([5], [1, 5]),
     ([2, 8, 4], [2, 9, 14]),
     ([4, 2, 5], [6, 7, 11]),
@@ -18,7 +18,7 @@ SAMPLES = [
 # 25,000 piles of 1. 25,000 queries for an impossible sum.
 # Logic: Brute force must check all N piles for all Q queries.
 # Cost: 25,000 * 25,000 = 625 Million operations.
-TLE_N = 25000
+TLE_N = 25000 
 TLE_COUNTS = [1] * TLE_N 
 TLE_QUERIES = [TLE_N + 1] * TLE_N # Every query forces a full scan
 
@@ -38,11 +38,11 @@ def solve(counts, queries):
         curr += c
         prefix.append(curr)
     
-    max_val = prefix[-1] if prefix else 0
+    total = prefix[-1]
     answers = []
     
     for q in queries:
-        if 1 <= q <= max_val:
+        if 1 <= q <= total:
             idx = bisect.bisect_left(prefix, q)
             answers.append(str(idx))
         else:
@@ -80,12 +80,16 @@ def main():
     print("Writing Random Secrets...")
     while curr_bytes < MAX_BYTES or secret_idx <= MIN_SECRETS:
         n_piles = RNG.randint(1, 2000)
+        # 20% chance of a large pile
         max_val = 100000 if RNG.random() < 0.2 else 1000 
         counts = [RNG.randint(1, max_val) for _ in range(n_piles)]
         total = sum(counts)
         
+        # 10% chance of a large query
+        max_query = 1000000000000000000 if RNG.random() < 0.1 else 1000000000
         n_queries = RNG.randint(1, 2000)
-        queries = [RNG.randint(1, int(total * 1.1) + 5) for _ in range(n_queries)]
+        queries = [RNG.randint(1, max_query) for _ in range(n_queries)] 
+
 
         curr_bytes += write_case("../data/secret", "secret", secret_idx, counts, queries)
         secret_idx += 1
